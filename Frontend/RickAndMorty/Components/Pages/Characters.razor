@@ -1,0 +1,122 @@
+﻿@page "/"
+
+@using RickAndMorty.Models
+@using RickAndMorty.Services
+
+@inject CharacterService CharacterService
+@inject ILogger<Characters> Logger
+
+<PageTitle>Rick & Morty Karakterer</PageTitle>
+
+<div class="characters-page">
+
+    <section class="hero-panel">
+        <div class="hero-text">
+            <h1>Rick & Morty Karakterer</h1>
+        </div>
+
+        @if (characters is not null)
+        {
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <span class="stat-number">@characters.Count</span>
+                    <span class="stat-label">Antal karakterer gemt</span>
+                </div>
+            </div>
+        }
+    </section>
+
+    @if (errorMessage != null)
+    {
+        <div class="message message-error">
+            @errorMessage
+        </div>
+    }
+    else if (characters == null)
+    {
+        <div class="message message-loading">
+            Loading characters...
+        </div>
+    }
+    else if (characters.Count == 0)
+    {
+        <div class="message">
+            No characters found in the database.
+        </div>
+    }
+    else
+    {
+        <div class="character-grid">
+            @foreach (var character in characters)
+            {
+                <article class="character-card">
+                    <div class="image-wrapper">
+                        @if (!string.IsNullOrWhiteSpace(character.Image))
+                        {
+                            <img src="@character.Image"
+                                 alt="@character.Name"
+                                 loading="lazy" />
+                        }
+                        else
+                        {
+                            <div class="no-image">No image available</div>
+                        }
+
+                        <span class="status-badge @GetStatusClass(character.Status)">
+                            @character.Status
+                        </span>
+                    </div>
+
+                    <div class="card-content">
+                        <h2>@character.Name</h2>
+
+                        <div class="info-list">
+                            <div class="info-row">
+                                <span class="label">Art</span>
+                                <span class="value">@character.Species</span>
+                            </div>
+
+                            <div class="info-row">
+                                <span class="label">Oprindelse</span>
+                                <span class="value">@character.Nameoforigin</span>
+                            </div>
+
+                            <div class="info-row">
+                                <span class="label">Status</span>
+                                <span class="value">@character.Status</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<Character>? characters;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            characters = await CharacterService.GetCharactersAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to load characters");
+            errorMessage = "Could not load characters from the database.";
+        }
+    }
+
+    private string GetStatusClass(string? status)
+    {
+        return (status ?? string.Empty).ToLower() switch
+        {
+            "alive" => "status-alive",
+            "dead" => "status-dead",
+            _ => "status-unknown"
+        };
+    }
+}
