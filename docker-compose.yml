@@ -1,0 +1,6 @@
+services:
+  rickmortyapp:
+    image: ${DOCKER_REGISTRY-}rickmortyapp
+    build:
+      context: .
+      dockerfile: RickMortyApp/Dockerfile
