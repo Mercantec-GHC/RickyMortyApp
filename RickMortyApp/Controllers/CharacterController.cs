@@ -21,11 +21,19 @@ namespace RickMortyApp.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> CreateCharacter(Characters character)
+		public async Task<IActionResult> CreateCharacter([FromBody] CharacterDto character)
 		{
-			_context.Characters.Add(character);
+			if (string.IsNullOrWhiteSpace(character.characterName) )
+			{
+				return BadRequest("Character name is required.");
+			}
+
+			var model = character.ToModel();
+
+			_context.Characters.Add(model);
 			await _context.SaveChangesAsync();
-			return CreatedAtAction(nameof(GetAllCharacters), new { id = character.id }, character);
+
+			return Ok(model);
 		}
 
 		[HttpDelete]
