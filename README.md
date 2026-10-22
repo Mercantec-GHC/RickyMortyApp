@@ -25,7 +25,9 @@ and an Arduino client.
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | /api/Character | Get all characters |
+| GET | /api/Character/{id} | Get a character by ID |
 | POST | /api/Character | Create a character |
+| DELETE | /api/Character/{id} | Delete a character by ID |
 | GET | /api/Status/dbhealthcheck | Check database connectivity |
 
 ### Create a character
