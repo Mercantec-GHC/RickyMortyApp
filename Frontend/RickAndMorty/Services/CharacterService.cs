@@ -26,10 +26,10 @@ namespace RickAndMorty.Services
             await connection.OpenAsync();
 
             const string sql = """
-                SELECT id, name, status, species, nameoforigin, image
-                FROM public."Characters"
-                ORDER BY id;
-                """;
+    SELECT id, name, status, species, nameoforigin, image
+    FROM public."Characters"
+    ORDER BY id DESC;
+    """;
 
             await using var command =
                 new NpgsqlCommand(sql, connection);
