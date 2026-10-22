@@ -1,0 +1,21 @@
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+WORKDIR /src
+
+COPY RickAndMorty.csproj ./
+RUN dotnet restore RickAndMorty.csproj
+
+COPY . .
+RUN dotnet publish RickAndMorty.csproj -c Release -o /app/publish --no-restore /p:UseAppHost=false
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+
+WORKDIR /app
+
+COPY --from=build /app/publish .
+
+ENV PORT=80
+ENV ASPNETCORE_URLS=http://0.0.0.0:80
+
+ENTRYPOINT ["dotnet", "RickAndMorty.dll"]
