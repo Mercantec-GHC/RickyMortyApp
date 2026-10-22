@@ -20,6 +20,17 @@ namespace RickMortyApp.Controllers
 			return await _context.Characters.ToListAsync();
 		}
 
+		[HttpGet("{id}")]
+		public async Task<IActionResult> GetCharacterById(int id)
+		{
+			var character = await _context.Characters.FindAsync(id);
+			if (character == null)
+			{
+				return NotFound();
+			}
+			return Ok(character);
+		}
+
 		[HttpPost]
 		public async Task<IActionResult> CreateCharacter([FromBody] CharacterDto character)
 		{
